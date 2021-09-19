@@ -1,0 +1,1 @@
+Follow along Udemy course, building React clothing store app, using Strapi backend.
