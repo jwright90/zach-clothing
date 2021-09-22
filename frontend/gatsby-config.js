@@ -8,6 +8,14 @@ module.exports = {
   },
   plugins: [
     `gatsby-plugin-react-helmet`,
+    {
+      resolve: `gatsby-source-strapi`,
+      options: {
+        apiURL: `http://localhost:1337`,
+        queryLimit: 1000, // Defaults to 100
+        collectionTypes: [`product`, `category`, `variant`],
+      },
+    },
     `gatsby-plugin-material-ui`,
     {
       resolve: "gatsby-plugin-web-font-loader",
