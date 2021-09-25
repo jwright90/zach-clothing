@@ -1,42 +1,58 @@
-import * as React from "react"
-import PropTypes from "prop-types"
-import { Link } from "gatsby"
+import React from 'react';
+import {
+  AppBar,
+  Button,
+  IconButton,
+  makeStyles,
+  Tab,
+  Tabs,
+  Toolbar,
+  Typography,
+} from '@material-ui/core/'
+import search from '../../images/icons/search.svg'
+import cart from '../../images/icons/cart.svg'
+import account from '../../images/icons/account-header.svg'
 
-const Header = ({ siteTitle }) => (
-  <header
-    style={{
-      background: `rebeccapurple`,
-      marginBottom: `1.45rem`,
-    }}
-  >
-    <div
-      style={{
-        margin: `0 auto`,
-        maxWidth: 960,
-        padding: `1.45rem 1.0875rem`,
-      }}
-    >
-      <h1 style={{ margin: 0 }}>
-        <Link
-          to="/"
-          style={{
-            color: `white`,
-            textDecoration: `none`,
-          }}
-        >
-          {siteTitle}
-        </Link>
-      </h1>
-    </div>
-  </header>
-)
+const useStyles = makeStyles(theme => ({
+  coloredIndicator: {
+    backgroundColor: '#fff'
+  },
+  logoText: {
+    color: theme.palette.common.offBlack
+  },
+  tabs: {
+    marginLeft: "auto",
+    marginRight: "auto"
+  },
 
-Header.propTypes = {
-  siteTitle: PropTypes.string,
-}
+}));
 
-Header.defaultProps = {
-  siteTitle: ``,
-}
+const Header = () => {
+  const classes = useStyles()
+  return (
+    <AppBar color="transparent" elevation={0}>
+      <Toolbar>
+        <Button>
+          <Typography variant="h1"><span className={classes.logoText}>Var</span> X</Typography>
+        </Button>
+        <Tabs value={0} classes={{ indicator: classes.coloredIndicator, root: classes.tabs }}>
+          <Tab label="Hats"></Tab>
+          <Tab label="Hoodies"></Tab>
+          <Tab label="Shirts"></Tab>
+          <Tab label="Contact Us"></Tab>
+        </Tabs>
+        <IconButton>
+          <img src={search} alt="search" />
+        </IconButton>
+        <IconButton>
+          <img src={cart} alt="cart" />
+        </IconButton>
+        <IconButton>
+          <img src={account} alt="account" />
+        </IconButton>
+      </Toolbar>
+    </AppBar>
+  )
+};
 
-export default Header
+export default Header;

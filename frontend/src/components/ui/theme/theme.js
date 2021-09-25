@@ -75,3 +75,5 @@ const theme = createTheme({
   },
   overides: {}
 });
+
+export default theme;
