@@ -27,8 +27,11 @@ const useStyles = makeStyles(theme => ({
 
 }));
 
-const Header = () => {
+const Header = ({ categories }) => {
   const classes = useStyles()
+
+  const routes = [...categories, { node: { name: "Contact Us", strapiId: "Contact" } }]
+
   return (
     <AppBar color="transparent" elevation={0}>
       <Toolbar>
@@ -36,10 +39,9 @@ const Header = () => {
           <Typography variant="h1"><span className={classes.logoText}>Var</span> X</Typography>
         </Button>
         <Tabs value={0} classes={{ indicator: classes.coloredIndicator, root: classes.tabs }}>
-          <Tab label="Hats"></Tab>
-          <Tab label="Hoodies"></Tab>
-          <Tab label="Shirts"></Tab>
-          <Tab label="Contact Us"></Tab>
+          {routes.map(route => (
+            <Tab label={route.node.name} key={route.node.strapiId} />
+          ))}
         </Tabs>
         <IconButton>
           <img src={search} alt="search" />
