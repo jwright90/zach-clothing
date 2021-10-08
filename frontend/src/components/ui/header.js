@@ -8,9 +8,9 @@ import {
   Tabs,
   Toolbar,
   Typography,
-} from '@material-ui/core/'
+} from '@material-ui/core/';
+import { Link, navigate } from 'gatsby';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import Hidden from '@material-ui/core/Hidden';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -27,15 +27,29 @@ const useStyles = makeStyles(theme => ({
   logoText: {
     color: theme.palette.common.offBlack
   },
+  logoContainer: {
+    [theme.breakpoints.down('md')]: {
+      marginRight: 'auto'
+    }
+  },
+  tab: {
+    ...theme.typography.body1,
+    fontWeight: 600,
+  },
   tabs: {
     marginLeft: "auto",
     marginRight: "auto"
   },
   icon: {
-    height: '5rem',
-    width: '5rem'
+    height: '4rem',
+    width: '4rem'
+  },
+  drawer: {
+    backgroundColor: theme.palette.primary.main,
+  },
+  listItemText: {
+    color: "#fff",
   }
-
 }));
 
 const Header = ({ categories }) => {
@@ -46,18 +60,33 @@ const Header = ({ categories }) => {
 
   const iOS = process.browser && /iPad|iPhone|iPad/.test(navigator.userAgent);
 
-  const routes = [...categories, { node: { name: "Contact Us", strapiId: "Contact" } }]
+  const routes = [
+    ...categories,
+    {
+      node:
+      {
+        name: "Contact Us",
+        strapiId: "Contact",
+        link: '/contact'
+      }
+    }
+  ]
 
   const tabs = (
         <Tabs value={0} classes={{ indicator: classes.coloredIndicator, root: classes.tabs }}>
           {routes.map(route => (
-            <Tab label={route.node.name} key={route.node.strapiId} />
+            <Tab
+              component={Link} to={route.node.link || `/${route.node.name.toLowerCase()}`}
+              classes={{root: classes.tab}}
+              label={route.node.name} key={route.node.strapiId}
+            />
           ))}
         </Tabs>
   )
 
   const drawer = (
     <SwipeableDrawer
+      classes={{paper: classes.drawer }}
       open={drawerOpen}
       onOpen={() => setDrawerOpen(true)}
       onClose={() => setDrawerOpen(false)}
@@ -66,36 +95,48 @@ const Header = ({ categories }) => {
       <List disablePadding>
           {routes.map(route => (
             <ListItem divider button key={route.node.strapiId}>
-              <ListItemText primary={route.node.name}/>
+              <ListItemText
+                classes={{primary: classes.listItemText}}
+                primary={route.node.name} />
             </ListItem>
           ))}
       </List>
     </SwipeableDrawer>
   )
 
+  const actions = [
+    { icon: search, alt: 'search', visible: true},
+    { icon: cart, alt: 'cart', visible: true, link: '/cart' },
+    { icon: account, alt: 'account', visible: !matchesMD, link: '/account' },
+    { icon: menu, alt: 'menu', visible: matchesMD, onClick: () => setDrawerOpen(true)}
+  ]
+
   return (
     <AppBar color="transparent" elevation={0}>
       <Toolbar>
-        <Button>
-          <Typography variant="h1"><span className={classes.logoText}>Var</span> X</Typography>
+        <Button classes={{root: classes.logoContainer}}>
+          <Typography variant="h1">
+            <span className={classes.logoText}>Var</span> X
+          </Typography>
         </Button>
         {matchesMD ? drawer : tabs}
-        <IconButton classes={{root: classes.icon}}>
-          <img 
-            src={search} alt="search" />
-        </IconButton>
-        <IconButton classes={{root: classes.icon}}>
-          <img 
-            src={cart} alt="cart" />
-        </IconButton>
-        <IconButton classes={{root: classes.icon}}
-          onClick={() => matchesMD ? setDrawerOpen(true) : null}
-        >
-          <img 
-            src={matchesMD ? menu : account}
-            alt={matchesMD ? "menu" : "account"}
-          />
-          </IconButton>
+        {actions.map(action => {
+          if (action.visible) {
+            return (
+              <IconButton
+                key={action.alt}
+                component = {Link} to={action.link}
+                classes={{ root: classes.icon }}
+              >
+                <img
+                  src={action.icon}
+                  alt={action.alt}
+                  onClick={action.onClick}
+                />
+              </IconButton>
+            )
+          }
+        })}
       </Toolbar>
     </AppBar>
   )
