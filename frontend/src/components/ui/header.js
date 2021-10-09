@@ -9,7 +9,7 @@ import {
   Toolbar,
   Typography,
 } from '@material-ui/core/';
-import { Link, navigate } from 'gatsby';
+import { Link } from 'gatsby';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import List from '@material-ui/core/List';
@@ -60,6 +60,15 @@ const Header = ({ categories }) => {
 
   const iOS = process.browser && /iPad|iPhone|iPad/.test(navigator.userAgent);
 
+  const activeIndex = () => {
+    const found = routes.indexOf(
+      routes
+        .filter(({ node: { name, link } }) =>
+          (link || `/${name.toLowerCase()}`) === window.location.pathname)[0]
+    )
+    return found === -1 ? false : found
+  }
+
   const routes = [
     ...categories,
     {
@@ -73,7 +82,7 @@ const Header = ({ categories }) => {
   ]
 
   const tabs = (
-        <Tabs value={0} classes={{ indicator: classes.coloredIndicator, root: classes.tabs }}>
+        <Tabs value={activeIndex()} classes={{ indicator: classes.coloredIndicator, root: classes.tabs }}>
           {routes.map(route => (
             <Tab
               component={Link} to={route.node.link || `/${route.node.name.toLowerCase()}`}
@@ -93,8 +102,11 @@ const Header = ({ categories }) => {
       disableBackdropTransition={!iOS} disableDiscovery={iOS}
     >
       <List disablePadding>
-          {routes.map(route => (
-            <ListItem divider button key={route.node.strapiId}>
+          {routes.map((route, index) => (
+            <ListItem
+              selected = {activeIndex() === index}
+              component = {Link} to={route.node.link || `/${route.node.name.toLowerCase()}`}
+              divider button key={route.node.strapiId}>
               <ListItemText
                 classes={{primary: classes.listItemText}}
                 primary={route.node.name} />
@@ -105,7 +117,7 @@ const Header = ({ categories }) => {
   )
 
   const actions = [
-    { icon: search, alt: 'search', visible: true},
+    { icon: search, alt: 'search', visible: true, onClick : ()=>console.log('Search')},
     { icon: cart, alt: 'cart', visible: true, link: '/cart' },
     { icon: account, alt: 'account', visible: !matchesMD, link: '/account' },
     { icon: menu, alt: 'menu', visible: matchesMD, onClick: () => setDrawerOpen(true)}
@@ -114,7 +126,9 @@ const Header = ({ categories }) => {
   return (
     <AppBar color="transparent" elevation={0}>
       <Toolbar>
-        <Button classes={{root: classes.logoContainer}}>
+        <Button
+          component={Link} to={"/"}
+          classes={{ root: classes.logoContainer }}>
           <Typography variant="h1">
             <span className={classes.logoText}>Var</span> X
           </Typography>
@@ -125,13 +139,14 @@ const Header = ({ categories }) => {
             return (
               <IconButton
                 key={action.alt}
-                component = {Link} to={action.link}
+                onClick={action.onClick}
+                component={action.onClick ? undefined : Link}
+                to={action.onClick ? undefined : action.link}
                 classes={{ root: classes.icon }}
               >
                 <img
                   src={action.icon}
                   alt={action.alt}
-                  onClick={action.onClick}
                 />
               </IconButton>
             )
